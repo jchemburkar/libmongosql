@@ -788,25 +788,25 @@ MYSQL_FIELD *cli_list_fields(MYSQL *mysql)
 MYSQL_RES * STDCALL
 mysql_list_fields(MYSQL *mysql, const char *table, const char *wild)
 {
-  #define MAX_TABLE_NAME_SIZE 65535
+  #define MAX_TABLE_NAME_SIZE 256
   MYSQL_RES   *result;
   MYSQL_FIELD *fields;
   // the buffer must be 130 characters bigger than MAX_TABLE_NAME_SIZE.
   // the other characters are used for the COM_FIELD_LIST packet header and possible wild card added
   // to the table name.
-  char buff, *end;
-  buff = malloc(65665);
+  char buff[386], *end;
+  // buff = malloc(65665);
   DBUG_ENTER("mysql_list_fields");
   DBUG_PRINT("enter",("table: '%s'  wild: '%s'",table,wild ? wild : ""));
 
-  end=strmake(strmake(buff, table, MAX_TABLE_NAME_SIZE)+1, wild ? wild : "", MAX_TABLE_NAME_SIZE);
+  end=strmake(strmake(buff, table, MAX_TABLE_NAME_SIZE * 2)+1, wild ? wild : "", MAX_TABLE_NAME_SIZE);
   free_old_query(mysql);
   if (simple_command(mysql, COM_FIELD_LIST, (uchar*) buff,
                      (ulong) (end-buff), 1) ||
       !(fields= (*mysql->methods->list_fields)(mysql)))
     DBUG_RETURN(NULL);
 
-  free(buff);
+  // free(buff);
   if (!(result = (MYSQL_RES *) my_malloc(PSI_NOT_INSTRUMENTED,
                                          sizeof(MYSQL_RES),
 					 MYF(MY_WME | MY_ZEROFILL))))
