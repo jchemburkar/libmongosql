@@ -799,7 +799,7 @@ mysql_list_fields(MYSQL *mysql, const char *table, const char *wild)
   DBUG_ENTER("mysql_list_fields");
   DBUG_PRINT("enter",("table: '%s'  wild: '%s'",table,wild ? wild : ""));
 
-  end=strmake(strmake(buff, table, MAX_TABLE_NAME_SIZE * 2)+1, wild ? wild : "", MAX_TABLE_NAME_SIZE);
+  end=strmake(strmake(buff, table, MAX_TABLE_NAME_SIZE)+1, wild ? wild : "", MAX_TABLE_NAME_SIZE);
   free_old_query(mysql);
   if (simple_command(mysql, COM_FIELD_LIST, (uchar*) buff,
                      (ulong) (end-buff), 1) ||
