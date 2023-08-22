@@ -794,7 +794,8 @@ mysql_list_fields(MYSQL *mysql, const char *table, const char *wild)
   // the buffer must be 130 characters bigger than MAX_TABLE_NAME_SIZE.
   // the other characters are used for the COM_FIELD_LIST packet header and possible wild card added
   // to the table name.
-  char	     buff[65665],*end;
+  char buff, *end;
+  buff = malloc(65665);
   DBUG_ENTER("mysql_list_fields");
   DBUG_PRINT("enter",("table: '%s'  wild: '%s'",table,wild ? wild : ""));
 
@@ -805,6 +806,7 @@ mysql_list_fields(MYSQL *mysql, const char *table, const char *wild)
       !(fields= (*mysql->methods->list_fields)(mysql)))
     DBUG_RETURN(NULL);
 
+  free(buff);
   if (!(result = (MYSQL_RES *) my_malloc(PSI_NOT_INSTRUMENTED,
                                          sizeof(MYSQL_RES),
 					 MYF(MY_WME | MY_ZEROFILL))))
